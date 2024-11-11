@@ -1,0 +1,105 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-title class="ion-text-center">Bienvenido</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <div class="logo-container">
+    <img src="assets/logo.png" alt="Logo" class="logo">
+  </div>
+
+  <div class="form-container">
+    <form (ngSubmit)="login()" #loginForm="ngForm">
+      <ion-card>
+        <ion-card-content>
+          <ion-item class="ion-margin-bottom">
+            <ion-label position="floating">Correo electrónico</ion-label>
+            <ion-input
+              type="email"
+              [(ngModel)]="credentials.email"
+              name="email"
+              required
+              class="custom-input"
+            ></ion-input>
+          </ion-item>
+
+          <ion-item class="ion-margin-bottom">
+            <ion-label position="floating">Contraseña</ion-label>
+            <ion-input
+              type="password"
+              [(ngModel)]="credentials.password"
+              name="password"
+              required
+              class="custom-input"
+            ></ion-input>
+          </ion-item>
+
+          <div class="ion-text-right">
+            <ion-text color="primary" class="forgot-password">
+              ¿Olvidaste tu contraseña?
+            </ion-text>
+          </div>
+
+          <ion-button
+            expand="block"
+            type="submit"
+            class="ion-margin-top login-button"
+            [disabled]="!loginForm.form.valid"
+          >
+            Iniciar Sesión
+          </ion-button>
+
+          <div class="ion-text-center ion-margin-top">
+            <ion-text color="medium">
+              ¿No tienes una cuenta? 
+              <ion-text color="primary" class="register-link">Regístrate aquí</ion-text>
+            </ion-text>
+          </div>
+        </ion-card-content>
+      </ion-card>
+    </form>
+  </div>
+</ion-content>
+
+<style>
+  .logo-container {
+    display: flex;
+    justify-content: center;
+    padding: 2rem 0;
+  }
+
+  .logo {
+    max-width: 150px;
+    height: auto;
+  }
+
+  .form-container {
+    max-width: 400px;
+    margin: 0 auto;
+  }
+
+  ion-card {
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    border-radius: 10px;
+  }
+
+  .custom-input {
+    margin-top: 5px;
+  }
+
+  .forgot-password {
+    font-size: 0.9rem;
+    cursor: pointer;
+  }
+
+  .login-button {
+    margin: 1.5rem 0;
+    --border-radius: 8px;
+  }
+
+  .register-link {
+    cursor: pointer;
+    font-weight: bold;
+  }
+</style>
