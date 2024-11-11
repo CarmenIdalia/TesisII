@@ -1,0 +1,89 @@
+canvas {
+  max-width: 100%;
+  height: 400px;
+}
+
+.stat-box {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+
+  .stat-content {
+    h3 {
+      font-size: 1.8em;
+      margin: 0;
+      font-weight: bold;
+      color: var(--ion-color-dark);
+    }
+    p {
+      margin: 5px 0 0;
+      color: var(--ion-color-medium);
+    }
+  }
+
+  .stat-icon {
+    ion-icon {
+      font-size: 2.5em;
+      color: var(--ion-color-primary);
+    }
+  }
+}
+
+.sales-card {
+  --background: linear-gradient(135deg, #36D1DC, #5B86E5);
+  .stat-content {
+    h3, p { color: white; }
+  }
+  .stat-icon ion-icon { color: white; }
+}
+
+.orders-card {
+  --background: linear-gradient(135deg, #FF9F43, #FF6B6B);
+  .stat-content {
+    h3, p { color: white; }
+  }
+  .stat-icon ion-icon { color: white; }
+}
+
+.inventory-card {
+  --background: linear-gradient(135deg, #45B649, #DCE35B);
+  .stat-content {
+    h3, p { color: white; }
+  }
+  .stat-icon ion-icon { color: white; }
+}
+
+ion-card {
+  margin: 10px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+
+  ion-card-content {
+    min-height: 200px;
+  }
+
+  ion-card-header {
+    background: #f8f9fa;
+    border-bottom: 1px solid rgba(0,0,0,0.05);
+
+    ion-card-title {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--ion-color-dark);
+    }
+  }
+
+  ion-card-content {
+    padding: 16px;
+    min-height: 300px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+}
+
+canvas {
+  width: 100% !important;
+  height: 300px !important;
+  margin: auto;
+}

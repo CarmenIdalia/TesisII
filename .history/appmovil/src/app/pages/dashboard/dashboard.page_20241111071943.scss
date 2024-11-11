@@ -1,0 +1,64 @@
+canvas {
+  max-width: 100%;
+  height: 400px;
+}
+
+.stat-box {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+
+  .stat-content {
+    h3 {
+      font-size: 24px;
+      margin: 0;
+      font-weight: bold;
+    }
+    p {
+      margin: 5px 0 0;
+      color: var(--ion-color-medium);
+    }
+  }
+
+  .stat-icon {
+    ion-icon {
+      font-size: 40px;
+      opacity: 0.7;
+    }
+  }
+}
+
+.sales-card {
+  --background: var(--ion-color-primary);
+  color: white;
+  .stat-content p {
+    color: rgba(255, 255, 255, 0.8);
+  }
+}
+
+.orders-card {
+  --background: var(--ion-color-success);
+  color: white;
+  .stat-content p {
+    color: rgba(255, 255, 255, 0.8);
+  }
+}
+
+.inventory-card {
+  --background: var(--ion-color-warning);
+  color: white;
+  .stat-content p {
+    color: rgba(255, 255, 255, 0.8);
+  }
+}
+
+ion-card {
+  margin: 10px;
+  border-radius: 10px;
+}
+
+canvas {
+  width: 100% !important;
+  height: 300px !important;
+}
