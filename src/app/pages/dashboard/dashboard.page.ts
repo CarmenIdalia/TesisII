@@ -1,9 +1,8 @@
 import { Component, OnInit } from '@angular/core';
+import { DashboardService } from '../../services/dashboard.service';
 import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
-import { DashboardService } from '../../services/dashboard.service';
-import { ToastController } from '@ionic/angular';
-import { Chart } from 'chart.js';
+import Chart from 'chart.js/auto';
 
 @Component({
   selector: 'app-dashboard',
@@ -14,153 +13,156 @@ export class DashboardPage implements OnInit {
   salesTotal: number = 0;
   ordersToday: number = 0;
   inventoryStatus: number = 0;
-  salesData: any[] = [];
-  inventoryData: any[] = [];
   salesChart: any;
   inventoryChart: any;
 
   constructor(
-    private authService: AuthService,
     private dashboardService: DashboardService,
-    private router: Router,
-    private toastController: ToastController
+    private authService: AuthService,
+    private router: Router
   ) {}
 
   ngOnInit() {
     this.loadDashboardData();
-    this.loadSalesData();
-    this.loadInventoryData();
   }
 
-  // Método para cargar datos de resumen
+  ionViewDidEnter() {
+    // Aseguramos que las gráficas se creen cuando la vista esté completamente cargada
+    this.loadDashboardData();
+  }
+
   loadDashboardData() {
-    this.dashboardService.getDashboardData().subscribe(data => {
-      this.salesTotal = data.sales_total;
-      this.ordersToday = data.orders_today;
-      this.inventoryStatus = data.inventory_status;
+    this.dashboardService.getAllDashboardData().subscribe({
+      next: (data) => {
+        console.log('Dashboard Data Received:', data);
+        this.salesTotal = data.salesTotal || 0;
+        this.ordersToday = data.ordersToday || 0;
+        this.inventoryStatus = data.inventoryStatus?.length || 0;
+
+        // Cargar gráficas directamente con los datos recibidos
+        if (data.salesDatesLabels && data.salesTotals) {
+          const salesData = data.salesDatesLabels.map((date: string, index: number) => ({
+            date: date,
+            total: data.salesTotals[index]
+          }));
+          this.createSalesChart(salesData);
+        }
+
+        if (data.inventoryItems && data.inventoryLevels) {
+          const inventoryData = data.inventoryItems.map((name: string, index: number) => ({
+            name: name,
+            quantity: data.inventoryLevels[index]
+          }));
+          this.createInventoryChart(inventoryData);
+        }
+      },
+      error: (error) => {
+        console.error('Error loading dashboard data:', error);
+      }
     });
   }
 
-  // Método para cargar datos de ventas diarias
-  loadSalesData() {
-    this.dashboardService.getSalesData().subscribe(data => {
-      this.salesData = data;
-      this.createSalesChart();
-    });
-  }
+  createSalesChart(data: any) {
+    setTimeout(() => {
+      const ctx = document.getElementById('salesChart') as HTMLCanvasElement;
+      if (!ctx) return;
 
-  // Método para cargar datos de inventario
-  loadInventoryData() {
-    this.dashboardService.getInventoryData().subscribe(data => {
-      this.inventoryData = data;
-      this.createInventoryChart();
-    });
-  }
+      if (this.salesChart) {
+        this.salesChart.destroy();
+      }
 
-  // Método para crear la gráfica de Ventas Diarias
-  createSalesChart() {
-    const labels = this.salesData.map(item => item.date);
-    const data = this.salesData.map(item => item.total);
+      const labels = data.map((item: any) => item.date);
+      const totals = data.map((item: any) => item.total);
+      const maxTotal = Math.max(...totals);
+      const yAxisMax = Math.ceil(maxTotal * 1.15);
 
-    this.salesChart = new Chart('salesChartCanvas', {
-      type: 'line',
-      data: {
-        labels: labels,
-        datasets: [
-          {
+      this.salesChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: labels,
+          datasets: [{
             label: 'Ventas Diarias',
-            data: data,
+            data: totals,
             borderColor: 'rgba(75, 192, 192, 1)',
             backgroundColor: 'rgba(75, 192, 192, 0.2)',
             borderWidth: 2,
             tension: 0.1,
-          },
-        ],
-      },
-      options: {
-        scales: {
-          x: {
-            type: 'category',
-            title: {
-              display: true,
-              text: 'Fecha',
-            },
-          },
-          y: {
-            beginAtZero: true,
-            title: {
-              display: true,
-              text: 'Total de Ventas',
-            },
-          },
+            fill: true
+          }]
         },
-      },
-    });
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+            y: {
+              beginAtZero: true,
+              max: yAxisMax,
+              ticks: {
+                callback: function(value) {
+                  return 'S/ ' + value;
+                }
+              }
+            }
+          },
+          plugins: {
+            legend: {
+              display: true
+            }
+          }
+        }
+      });
+    }, 150);
   }
 
-  // Método para crear la gráfica de Estado de Inventario
-  createInventoryChart() {
-    const labels = this.inventoryData.map(item => item.name);
-    const data = this.inventoryData.map(item => item.quantity);
+  createInventoryChart(data: any) {
+    setTimeout(() => {
+      const ctx = document.getElementById('inventoryChart') as HTMLCanvasElement;
+      if (!ctx) return;
 
-    this.inventoryChart = new Chart('inventoryChartCanvas', {
-      type: 'bar',
-      data: {
-        labels: labels,
-        datasets: [
-          {
+      if (this.inventoryChart) {
+        this.inventoryChart.destroy();
+      }
+
+      const labels = data.map((item: any) => item.name);
+      const quantities = data.map((item: any) => item.quantity);
+      const maxQuantity = Math.max(...quantities);
+      const yAxisMax = Math.ceil(maxQuantity * 1.15);
+
+      this.inventoryChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: labels,
+          datasets: [{
             label: 'Nivel de Inventario',
-            data: data,
+            data: quantities,
             backgroundColor: 'rgba(255, 159, 64, 0.2)',
             borderColor: 'rgba(255, 159, 64, 1)',
-            borderWidth: 1,
-          },
-        ],
-      },
-      options: {
-        scales: {
-          x: {
-            title: {
-              display: true,
-              text: 'Producto',
-            },
-          },
-          y: {
-            beginAtZero: true,
-            title: {
-              display: true,
-              text: 'Cantidad',
-            },
-          },
+            borderWidth: 1
+          }]
         },
-      },
-    });
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+            y: {
+              beginAtZero: true,
+              max: yAxisMax
+            }
+          }
+        }
+      });
+    }, 150);
   }
 
-  // Método de logout
   async logout() {
-    try {
-      await this.authService.logout().subscribe(
-        async () => {
-          const toast = await this.toastController.create({
-            message: 'Sesión cerrada exitosamente',
-            duration: 2000,
-            color: 'success'
-          });
-          await toast.present();
-          this.router.navigate(['/login']);
-        },
-        async (error) => {
-          const toast = await this.toastController.create({
-            message: 'Error al cerrar sesión',
-            duration: 2000,
-            color: 'danger'
-          });
-          await toast.present();
-        }
-      );
-    } catch (error) {
-      console.error('Error:', error);
-    }
+    // Limpiar el localStorage
+    localStorage.clear();
+    // O si prefieres solo eliminar el token específico:
+    // localStorage.removeItem('token');
+
+    // Navegar al login y evitar que pueda volver atrás
+    this.router.navigate(['/login'], {
+      replaceUrl: true
+    });
   }
 }

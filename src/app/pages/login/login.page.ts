@@ -40,7 +40,7 @@ export class LoginPage implements OnInit {
             color: 'success'
           });
           await toast.present();
-          this.router.navigate(['/home']);
+          this.router.navigate(['/dashboard']);
         },
         async (err) => {
           const toast = await this.toastController.create({

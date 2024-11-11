@@ -1,13 +1,14 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { Observable, throwError } from 'rxjs';
+import { map, tap, catchError } from 'rxjs/operators';
+import { environment } from 'src/environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
-  private apiUrl = 'http://localhost:8000/api'; // Ajusta esta URL según tu backend
+  private apiUrl = environment.apiUrl;
   private token: string | null = null;
 
   constructor(private http: HttpClient) {
@@ -19,25 +20,32 @@ export class AuthService {
       email,
       password
     }).pipe(
-      map((response: any) => {
+      tap((response: any) => {
         if (response.token) {
           localStorage.setItem('token', response.token);
           this.token = response.token;
         }
-        return response;
-      })
+      }),
+      tap(response => console.log('Login Response:', response)) // Para debug
     );
   }
 
   logout(): Observable<any> {
     const headers = new HttpHeaders({
-      'Authorization': `Bearer ${this.token}`
+      'Authorization': `Bearer ${localStorage.getItem('token')}`,
+      'Accept': 'application/json'
     });
 
     return this.http.post(`${this.apiUrl}/logout`, {}, { headers }).pipe(
-      map(() => {
+      tap(() => {
         localStorage.removeItem('token');
         this.token = null;
+      }),
+      catchError(error => {
+        console.error('Logout Error:', error);
+        localStorage.removeItem('token');
+        this.token = null;
+        return throwError(() => error);
       })
     );
   }

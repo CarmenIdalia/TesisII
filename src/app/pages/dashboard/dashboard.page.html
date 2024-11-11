@@ -14,73 +14,81 @@
 </ion-header>
 
 <ion-content>
-  <!-- Tarjetas de estadísticas -->
   <div class="ion-padding">
     <ion-grid>
       <ion-row>
-        <!-- Tarjeta de Ventas Totales -->
-        <ion-col size="12" size-md="6">
-          <ion-card color="primary">
-            <ion-card-header>
-              <ion-card-subtitle>Resumen</ion-card-subtitle>
-              <ion-card-title>Ventas Totales</ion-card-title>
-            </ion-card-header>
+        <!-- Ventas Totales -->
+        <ion-col size="12" size-md="4">
+          <ion-card class="sales-card">
             <ion-card-content>
-              <h2>{{ salesTotal | currency }}</h2>
+              <div class="stat-box">
+                <div class="stat-content">
+                  <h3>{{ salesTotal | number:'1.2-2' }}</h3>
+                  <p>Ventas Totales</p>
+                </div>
+                <div class="stat-icon">
+                  <ion-icon name="cash-outline"></ion-icon>
+                </div>
+              </div>
             </ion-card-content>
           </ion-card>
         </ion-col>
 
-        <!-- Tarjeta de Pedidos Hoy -->
-        <ion-col size="12" size-md="6">
-          <ion-card color="success">
-            <ion-card-header>
-              <ion-card-subtitle>Resumen</ion-card-subtitle>
-              <ion-card-title>Pedidos Hoy</ion-card-title>
-            </ion-card-header>
+        <!-- Pedidos Hoy -->
+        <ion-col size="12" size-md="4">
+          <ion-card class="orders-card">
             <ion-card-content>
-              <h2>{{ ordersToday }}</h2>
+              <div class="stat-box">
+                <div class="stat-content">
+                  <h3>{{ ordersToday }}</h3>
+                  <p>Pedidos Hoy</p>
+                </div>
+                <div class="stat-icon">
+                  <ion-icon name="cart-outline"></ion-icon>
+                </div>
+              </div>
             </ion-card-content>
           </ion-card>
         </ion-col>
 
-        <!-- Tarjeta de Artículos a Reabastecer -->
-        <ion-col size="12" size-md="6">
-          <ion-card color="warning">
-            <ion-card-header>
-              <ion-card-subtitle>Resumen</ion-card-subtitle>
-              <ion-card-title>Artículos a Reabastecer</ion-card-title>
-            </ion-card-header>
+        <!-- Inventario Bajo -->
+        <ion-col size="12" size-md="4">
+          <ion-card class="inventory-card">
             <ion-card-content>
-              <h2>{{ inventoryStatus }}</h2>
+              <div class="stat-box">
+                <div class="stat-content">
+                  <h3>{{ inventoryStatus }}</h3>
+                  <p>Artículos a Reabastecer</p>
+                </div>
+                <div class="stat-icon">
+                  <ion-icon name="cube-outline"></ion-icon>
+                </div>
+              </div>
             </ion-card-content>
           </ion-card>
         </ion-col>
       </ion-row>
 
-      <!-- Gráfica de Ventas Diarias -->
+      <!-- Gráficas -->
       <ion-row>
-        <ion-col size="12">
+        <ion-col size="12" size-md="6">
           <ion-card>
             <ion-card-header>
               <ion-card-title>Ventas Diarias</ion-card-title>
             </ion-card-header>
             <ion-card-content>
-              <canvas id="salesChartCanvas"></canvas>
+              <canvas id="salesChart"></canvas>
             </ion-card-content>
           </ion-card>
         </ion-col>
-      </ion-row>
 
-      <!-- Gráfica de Estado de Inventario -->
-      <ion-row>
-        <ion-col size="12">
+        <ion-col size="12" size-md="6">
           <ion-card>
             <ion-card-header>
               <ion-card-title>Estado de Inventario</ion-card-title>
             </ion-card-header>
             <ion-card-content>
-              <canvas id="inventoryChartCanvas"></canvas>
+              <canvas id="inventoryChart"></canvas>
             </ion-card-content>
           </ion-card>
         </ion-col>
