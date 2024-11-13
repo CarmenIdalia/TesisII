@@ -3,6 +3,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { catchError, map, tap } from 'rxjs/operators';
 import { environment } from '../../environments/environment';
+import { DashboardData } from '../interfaces/dashboard.interfaces';
 
 @Injectable({
   providedIn: 'root'
@@ -36,13 +37,20 @@ export class DashboardService {
   }
 
   // Mantener los métodos individuales pero usando el mismo endpoint
-  getDashboardData(): Observable<any> {
-    return this.getAllDashboardData().pipe(
-      map((response: any) => ({
-        sales_total: response.salesTotal || 0,
-        orders_today: response.ordersToday || 0,
-        inventory_status: response.inventoryStatus?.length || 0
-      }))
+  getDashboardData(): Observable<DashboardData> {
+    const headers = this.getHeaders();
+    return this.http.get<DashboardData>(`${this.apiUrl}/dashboard`, { headers }).pipe(
+      tap(response => console.log('API Response:', response)),
+      map(response => {
+        // Si la respuesta viene en una propiedad data, extraerla
+        const data = (response as any).data || response;
+        console.log('Processed data:', data);
+        return data;
+      }),
+      catchError(error => {
+        console.error('API Error:', error);
+        return throwError(() => error);
+      })
     );
   }
 
